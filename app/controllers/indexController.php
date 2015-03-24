@@ -51,6 +51,16 @@ class IndexController extends BaseController{
 		}
 	}
 
+	public function addTwitter($fbid){
+		$twiterID = Input::get('twid');
+		DB::table('users')
+            ->where('fbid', $fbid)
+            ->update(array('twid' => $new_name));
+
+		$user = User::whereFbid($fbid)->with('fieldaction')->get();
+		return Response::json($user);
+	}
+
 	public function addPoints($fbid){
 		$user = User::where('fbid', '=', $fbid)->get();
 		DB::table('users')
