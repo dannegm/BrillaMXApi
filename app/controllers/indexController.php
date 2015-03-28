@@ -55,7 +55,7 @@ class IndexController extends BaseController{
 		$twiterID = Input::get('twid');
 		DB::table('users')
             ->where('fbid', $fbid)
-            ->update(array('twid' => $new_name));
+            ->update(array('twid' => $twiterID));
 
 		$user = User::whereFbid($fbid)->with('fieldaction')->get();
 		return Response::json($user);
@@ -99,7 +99,12 @@ class IndexController extends BaseController{
 	}
 
 	public function getSelfies($fbid){
-		$selfies = Selfie::where('user_id', '=', $fbid)->OrderBy('id', 'desc')->with('engagement')->get();
+		$selfies = Selfie::where('user_id', '=', $fbid)
+			->OrderBy('id', 'desc')
+			->take(30)
+			->with('engagement')
+			->with('user')
+			->get();
 
 		if($selfies->isEmpty()){
 			$error = array(
@@ -130,6 +135,8 @@ class IndexController extends BaseController{
 
 			//guardamos la imágen en una variabñe
 			$image = Input::file('picture');
+			$deg = Input::get('deg');
+			$deg = isset($deg) ? $deg : 0;
 
 			//obtenemos el md5
 			$md5 = md5_file($image);
@@ -170,13 +177,14 @@ class IndexController extends BaseController{
 			}
 
 			$img = Image::make($file)->crop($width, $height, 0, 0);
+			$img = Image::make($img)->rotate(-$deg);
 
 			//id de compromiso
 			$engagement = Input::get('engagement_id');
 
-			//redimensiones a todos tamaños de carpetas y 
+			//redimensiones a todos tamaños de carpetas y
 			Image::make($img)->resize(512, 512)->insert('img/'.$engagement.'.png')->save($path);
-			Image::make($img)->resize(64, 64)->save($pathThumb);
+			Image::make($img)->resize(128, 128)->save($pathThumb);
 
 			$selfie = Selfie::wherePicture($filename)->first();
 
