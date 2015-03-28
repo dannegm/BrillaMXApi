@@ -56,7 +56,7 @@ return array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
 			'database'  => 'brillamx',
-			'username'  => 'brillamx',
+			'username'  => 'root',
 			'password'  => 'br1ll4MX',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
