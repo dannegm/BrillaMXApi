@@ -263,9 +263,12 @@ class IndexController extends BaseController{
 	}
 
 	public function deleteUser($fbid){
+		$user = User::where('fbid', '=', $fbid)->get();
+		$id = $user[0]->id;
 		try {
 			DB::table('selfies')->where('user_id', '=', $fbid)->delete();
 			DB::table('users')->where('fbid', '=', $fbid)->delete();
+			DB::table('achievement_user')->where('user_id', '=', $id)->delete();
 
 			$status = array(
 				'status' => 'success'
@@ -277,6 +280,16 @@ class IndexController extends BaseController{
 			);
 		}
 		return Response::json($status);
+	}
+
+	public function addShare($fbid){
+		$share = Input::get('share');
+		DB::table('users')
+			->where('fbid', $fbid)
+			->increment('shares');
+
+		$user = User::whereFbid($fbid)->with('fieldaction')->get();
+		return Response::json($user);
 	}
 
 /*
@@ -298,7 +311,7 @@ class IndexController extends BaseController{
 	}
 
 	public function getAllSelfies(){
-		$selfies = Selfie::OrderBy('id', 'desc')->take(30)->get();
+		$selfies = Selfie::OrderBy('id', 'desc')->with('user')->take(30)->get();
 
 		return Response::json($selfies);
 	}

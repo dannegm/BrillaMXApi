@@ -70,6 +70,10 @@ Route::post('user/logro/{id}', [
 	'uses' => 'IndexController@addLogro'
 ]);
 
+Route::post('user/share/{id}', [
+	'uses' => 'IndexController@addShare'
+]);
+
 /*
 * ----------------------------------
 *  USERS ROUTES
@@ -100,6 +104,20 @@ Route::get('users/leaders/', [
 
 Route::get('tweets/hashtag/{hashtag}', [
 	'uses' => 'TwitterController@tweetsByHashtag'
+]);
+
+/*
+* ----------------------------------
+*  Wordpress
+* ----------------------------------
+*/
+
+Route::get('wordpress/notas/{page}', [
+	'uses' => 'WordpressController@notas'
+]);
+
+Route::get('wordpress/nota/{id}', [
+	'uses' => 'WordpressController@nota'
 ]);
 
 
